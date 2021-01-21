@@ -72,7 +72,7 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         showLoading.value = true
         viewModelScope.launch {
             dataSource.saveReminder(reminderData)
-            //addGeofence(reminderData)
+            addGeofence(reminderData)
             showLoading.value = false
             showToast.value = app.getString(R.string.reminder_saved)
             navigationCommand.value = NavigationCommand.BackTo(R.id.reminderListFragment)

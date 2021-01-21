@@ -83,8 +83,8 @@ class SaveReminderFragment : BaseFragment() {
 //             2) save the reminder to the local db
 
             val reminderDTO = ReminderDTO(title, description, location, latitude, longitude)
-            addGeofence(reminderDTO)
-            //_viewModel.validateAndSaveReminder(reminderDTO)
+            //addGeofence(reminderDTO)
+            _viewModel.validateAndSaveReminder(reminderDTO)
         }
 
         if (!args.selectedLocation.isEmpty()) {

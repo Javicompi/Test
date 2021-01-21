@@ -48,7 +48,7 @@ class ReminderListFragment : BaseFragment() {
             navigateToAddReminder()
         }
         //TODO for testing purpose, authentication deactivated
-        //observeAuthenticationState()
+        observeAuthenticationState()
     }
 
     override fun onResume() {
@@ -69,6 +69,7 @@ class ReminderListFragment : BaseFragment() {
 
     private fun setupRecyclerView() {
         val adapter = RemindersListAdapter {
+
         }
 //        setup the recycler view using the extension function
         binding.reminderssRecyclerView.setup(adapter)

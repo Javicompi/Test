@@ -1,5 +1,7 @@
 package com.udacity.project4.locationreminders.data.local
 
+import android.app.Application
+import androidx.room.Room
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
@@ -63,6 +65,25 @@ class RemindersLocalRepository(
     override suspend fun deleteAllReminders() {
         withContext(ioDispatcher) {
             remindersDao.deleteAllReminders()
+        }
+    }
+
+    companion object {
+        @Volatile
+        private var INSTANCE: RemindersLocalRepository? = null
+
+        fun getRepository(app: Application): RemindersLocalRepository {
+            return INSTANCE ?: synchronized(this) {
+                val database =
+                    Room.databaseBuilder(
+                        app,
+                        RemindersDatabase::class.java,
+                        "Reminders.db"
+                    ).build()
+                RemindersLocalRepository(database.reminderDao()).also {
+                    INSTANCE = it
+                }
+            }
         }
     }
 }
