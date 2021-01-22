@@ -17,7 +17,7 @@ val testModule = module {
     viewModel {
         RemindersListViewModel(
             get(),
-            get() as ReminderDataSource
+            get() as FakeRemindersRepository
         )
     }
     single {
@@ -27,7 +27,7 @@ val testModule = module {
         ).allowMainThreadQueries()
             .build()
     }
-    single { RemindersLocalRepository(get()) as ReminderDataSource }
+    //single { RemindersLocalRepository(get()) as ReminderDataSource }
     single { LocalDB.createRemindersDao(androidContext()) }
     single { FakeRemindersRepository() }
     //single { FakeRemindersRepository() as ReminderDataSource }

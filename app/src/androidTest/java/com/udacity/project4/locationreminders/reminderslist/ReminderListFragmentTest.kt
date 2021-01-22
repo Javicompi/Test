@@ -24,6 +24,7 @@ import com.udacity.project4.locationreminders.data.dto.succeeded
 import com.udacity.project4.locationreminders.data.local.FakeRemindersRepository
 import com.udacity.project4.locationreminders.testModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
@@ -111,6 +112,10 @@ class ReminderListFragmentTest: KoinTest {
             0.0,
             0.0
         )
+        /*runBlocking {
+            repository.saveReminder(reminder1)
+            repository.saveReminder(reminder2)
+        }*/
         repository.saveReminder(reminder1)
         repository.saveReminder(reminder2)
         val reminders = repository.getReminders()
