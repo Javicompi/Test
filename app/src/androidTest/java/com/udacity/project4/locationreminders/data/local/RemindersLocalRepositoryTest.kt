@@ -65,6 +65,7 @@ class RemindersLocalRepositoryTest {
         assertThat(retrieved.succeeded, `is`(true))
         retrieved as Result.Success
         assertThat(retrieved.data.id, `is`(reminder1.id))
+        repository.deleteAllReminders()
     }
 
     @Test
@@ -76,6 +77,7 @@ class RemindersLocalRepositoryTest {
         retrievedReminders as Result.Success
         assertThat(retrievedReminders.data.get(0).id, `is`(reminder1.id))
         assertThat(retrievedReminders.data.get(1).id, `is`(reminder2.id))
+        repository.deleteAllReminders()
     }
 
     @Test
