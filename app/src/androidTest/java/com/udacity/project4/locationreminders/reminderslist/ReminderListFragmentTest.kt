@@ -1,7 +1,6 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.os.Bundle
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
@@ -18,13 +17,11 @@ import androidx.test.rule.GrantPermissionRule
 import com.google.firebase.auth.FirebaseAuth
 import com.udacity.project4.R
 import com.udacity.project4.locationreminders.RemindersActivity
-import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.succeeded
 import com.udacity.project4.locationreminders.data.local.FakeRemindersRepository
 import com.udacity.project4.locationreminders.testModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
@@ -47,17 +44,12 @@ import org.mockito.Mockito.verify
 @MediumTest
 class ReminderListFragmentTest: KoinTest {
 
-    private val TAG = ReminderListFragmentTest::class.java.simpleName
-
 //    TODO: test the navigation of the fragments.
 //    TODO: test the displayed data on the UI.
 //    TODO: add testing for the error messages.
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
-
-    @get:Rule
-    var activityRule = ActivityTestRule(RemindersActivity::class.java)
 
     @get:Rule
     var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
@@ -69,7 +61,7 @@ class ReminderListFragmentTest: KoinTest {
     private lateinit var auth: FirebaseAuth
 
     @Before
-    fun setup() {
+    fun setup() = runBlockingTest{
         stopKoin()
         startKoin {
             androidContext(getApplicationContext())
@@ -92,12 +84,8 @@ class ReminderListFragmentTest: KoinTest {
     }
 
     @Test
-    fun repository_isFakeRepository() {
-        assertThat(repository.javaClass.simpleName, `is`(FakeRemindersRepository::class.java.simpleName))
-    }
-
-    @Test
     fun loadData_showRecyclerView() = runBlockingTest {
+        //Set some data
         val reminder1 = ReminderDTO(
             "Title1",
             "Description1",
@@ -112,15 +100,17 @@ class ReminderListFragmentTest: KoinTest {
             0.0,
             0.0
         )
-        /*runBlocking {
-            repository.saveReminder(reminder1)
-            repository.saveReminder(reminder2)
-        }*/
         repository.saveReminder(reminder1)
         repository.saveReminder(reminder2)
+
+        //Get the reminders
         val reminders = repository.getReminders()
         assertThat(reminders.succeeded, `is`(true))
+
+        //Launch the fragment
         launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+
+        //Check reminders are shown
         onView(withText(reminder1.title)).check(matches(isDisplayed()))
         onView(withText(reminder2.title)).check(matches(isDisplayed()))
         repository.deleteAllReminders()
@@ -128,11 +118,16 @@ class ReminderListFragmentTest: KoinTest {
 
     @Test
     fun addReminderButton_navigateToAddReminder() {
+        //Launch the fragment
         val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+
+        //Get the NavController instance
         val navController = mock(NavController::class.java)
         scenario.onFragment {
             Navigation.setViewNavController(it.view!!, navController)
         }
+
+        //Navigate to add reminder and check navigated
         onView(withId(R.id.addReminderFAB)).perform(click())
         verify(navController).navigate(ReminderListFragmentDirections.toSaveReminder())
     }

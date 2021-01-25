@@ -54,31 +54,36 @@ class RemindersListViewModelTest {
 
     @Test
     fun showLoading_loadReminders_showNoData() {
+        //Load reminders in viewmodel
         mainCoroutineRule.pauseDispatcher()
         viewModel.loadReminders()
+
+        //Check loading is shown
         assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(true))
         mainCoroutineRule.resumeDispatcher()
+
+        //Check loading is hidden
         assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(false))
+
+        //Check nodata is shown
         assertThat(viewModel.showNoData.getOrAwaitValue(), `is`(true))
     }
 
     @Test
-    fun showLoading_loadReminders_showData() {
+    fun showLoading_loadReminders_showData() = runBlockingTest {
+        //Load reminders in viewmodel
         dataSource.reminders = createReminders()
         mainCoroutineRule.pauseDispatcher()
         viewModel.loadReminders()
+
+        //Check loading is shown
         assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(true))
         mainCoroutineRule.resumeDispatcher()
+
+        //Check loading and nodata is hidden
         assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(false))
         assertThat(viewModel.showNoData.getOrAwaitValue(), `is`(false))
-    }
-
-    @Test
-    fun loadReminders_showNoData() = runBlockingTest {
         dataSource.deleteAllReminders()
-        dataSource.deleteAllReminders()
-        viewModel.loadReminders()
-        assertThat(viewModel.showNoData.getOrAwaitValue(), `is`(true))
     }
 
     @Test
@@ -88,6 +93,7 @@ class RemindersListViewModelTest {
         dataSource.reminders = reminders
         viewModel.loadReminders()
         assertThat(viewModel.showNoData.getOrAwaitValue(), `is`(false))
+        dataSource.deleteAllReminders()
     }
 
     @Test
@@ -99,6 +105,14 @@ class RemindersListViewModelTest {
         assertThat(viewModel.remindersList.value?.size, `is`(2))
         assertThat(viewModel.remindersList.value?.get(0)?.title, `is`("First"))
         assertThat(viewModel.remindersList.value?.get(1)?.title, `is`("Second"))
+        dataSource.deleteAllReminders()
+    }
+
+    @Test
+    fun loadReminders_setError_showError() = runBlockingTest {
+        dataSource.setReturnError(true)
+        viewModel.loadReminders()
+        assertThat(viewModel.showSnackBar.getOrAwaitValue(), `is`("Reminders not found"))
     }
 
     private fun createReminders(): MutableList<ReminderDTO> {

@@ -11,8 +11,8 @@ sealed class Result<out T : Any> {
         Result<Nothing>()
 }
 
-/**
- * `true` if [Result] is of type [Success] & holds non-null [Success.data].
- */
 val Result<*>.succeeded
-    get() = this is Result.Success && data != null
+    get() = this is Result.Success
+
+val Result<*>.failed
+    get() = this is Result.Error

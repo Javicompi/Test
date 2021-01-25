@@ -60,6 +60,7 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         }
     }*/
     fun validateAndSaveReminder(reminderDTO: ReminderDTO) {
+        Log.d(TAG, "Reminder: ${reminderDTO.toString()}")
         if (validateEnteredData(reminderDTO)) {
             saveReminder(reminderDTO)
         }

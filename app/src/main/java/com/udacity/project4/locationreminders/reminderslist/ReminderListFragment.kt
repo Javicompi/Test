@@ -48,7 +48,7 @@ class ReminderListFragment : BaseFragment() {
             navigateToAddReminder()
         }
         //TODO for testing purpose, authentication deactivated
-        observeAuthenticationState()
+        //observeAuthenticationState()
     }
 
     override fun onResume() {
@@ -78,7 +78,10 @@ class ReminderListFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
-                AuthUI.getInstance().signOut(requireContext())
+                AuthUI.getInstance().signOut(requireContext()).addOnCompleteListener {
+                    startActivity(Intent(context,AuthenticationActivity::class.java))
+                    activity?.finish()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -90,7 +93,7 @@ class ReminderListFragment : BaseFragment() {
         inflater.inflate(R.menu.main_menu, menu)
     }
 
-    private fun observeAuthenticationState() {
+    fun observeAuthenticationState() {
         _viewModel.authenticationState.observe(viewLifecycleOwner, Observer { authenticationState->
             when (authenticationState) {
                 RemindersListViewModel.AuthenticationState.AUTHENTICATED -> {

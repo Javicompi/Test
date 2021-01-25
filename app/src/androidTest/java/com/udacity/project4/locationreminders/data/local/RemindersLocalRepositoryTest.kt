@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
+import com.udacity.project4.locationreminders.data.dto.failed
 import com.udacity.project4.locationreminders.data.dto.succeeded
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -93,5 +94,13 @@ class RemindersLocalRepositoryTest {
         assertThat(emptyReminders.succeeded, `is`(true))
         emptyReminders as Result.Success
         assertThat(emptyReminders.data.size, `is`(0))
+    }
+
+    @Test
+    fun getReminder_returnError() = runBlockingTest {
+        val retrieved = repository.getReminder("")
+        assertThat(retrieved.failed, `is`(true))
+        retrieved as Result.Error
+        assertThat(retrieved.message, `is`("Reminder not found!"))
     }
 }
